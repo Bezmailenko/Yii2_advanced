@@ -15,7 +15,7 @@ class m181109_125949_add_user extends Migration
         $this->createTable('user', [
             'id' => $this->primaryKey(),
             'username' => $this->string(255)->notNull(),
-            'name' => $this->string(255)->notNull(),
+            'name' => $this->string(255),
             'avatar' => $this->string(255),
             'email' => $this->string(255),
             'auth_key' => $this->string(255)->notNull(),

@@ -26,6 +26,7 @@ class SignupFormTest extends \Codeception\Test\Unit
     {
         $model = new SignupForm([
             'username' => 'some_username',
+            'name' => 'some_name',
             'email' => 'some_email@example.com',
             'password' => 'some_password',
         ]);
