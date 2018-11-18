@@ -12,7 +12,7 @@ class m181115_093348_add_task extends Migration
      */
     public function safeUp()
     {
-        $this->createTable('task', [
+        $this->createTable('task1', [
             'id' => $this->primaryKey(),
             'title' => $this->string(255)->notNull(),
             'description' => $this->text()->notNull(),
@@ -26,9 +26,9 @@ class m181115_093348_add_task extends Migration
             'updated_at' => $this->integer()
         ]);
 
-        $this->addForeignKey('fx_task_user_1', 'task', ['executor_id'], 'user', ['id']);
-        $this->addForeignKey('fx_task_user_2', 'task', ['created_by'], 'user', ['id']);
-        $this->addForeignKey('fx_task_user_3', 'task', ['updated_by'], 'user', ['id']);
+        $this->addForeignKey('fx_task1_user_1', 'task1', ['executor_id'], 'user', ['id']);
+        $this->addForeignKey('fx_task1_user_2', 'task1', ['created_by'], 'user', ['id']);
+        $this->addForeignKey('fx_task1_user_3', 'task1', ['updated_by'], 'user', ['id']);
     }
 
     /**

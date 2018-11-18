@@ -31,5 +31,10 @@ return [
             ],
         ],
     ],
+    'modules' => [
+        'Chat' => [
+            'class' => 'common\modules\chat\Module',
+        ],
+    ],
     'params' => $params,
 ];
