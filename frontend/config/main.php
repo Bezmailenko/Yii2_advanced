@@ -13,6 +13,10 @@ return [
     'controllerNamespace' => 'frontend\controllers',
     'components' => [
         'request' => [
+            'baseUrl' => '',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ],
             'csrfParam' => '_csrf-frontend',
         ],
         'user' => [
@@ -40,12 +44,16 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                ['class' => 'yii\rest\UrlRule', 'controller' => ['api/user', 'api/project']],
             ],
         ],
     ],
     'modules' => [
         'Chat' => [
             'class' => 'common\modules\chat\Module',
+        ],
+        'api' => [
+            'class' => 'frontend\modules\api\Module',
         ],
     ],
     'params' => $params,

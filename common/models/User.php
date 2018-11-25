@@ -22,7 +22,13 @@ use yii\web\IdentityInterface;
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
+ * @property Task[] $activedTasks
+ * @property Task[] $createdTasks
+ * @property Task[] $updatedTasks
+ * @property Project[] $createdProjects
+ * @property Project[] $updatedProjects
  */
+
 class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
@@ -55,6 +61,9 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            ['username', 'required'],
+            [['username', 'email', 'auth_key', 'password_hash', 'creator_id'], 'safe'],
+
         ];
     }
 
@@ -187,5 +196,36 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getActivedTasks()
+    {
+        return $this->hasMany(Task::className(), ['executor_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCreatedTasks()
+    {
+        return $this->hasMany(Task::className(), ['created_by' => 'id']);
+    }
+
+    public function getUpdatedTasks()
+    {
+        return $this->hasMany(Task::className(), ['updated_by' => 'id']);
+    }
+
+    public function getCreatedProjects()
+    {
+        return $this->hasMany(Project::className(), ['created_by' => 'id']);
+    }
+
+    public function getUpdatedProjects()
+    {
+        return $this->hasMany(Project::className(), ['updated_by' => 'id']);
     }
 }
