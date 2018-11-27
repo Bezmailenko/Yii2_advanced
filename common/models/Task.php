@@ -11,6 +11,7 @@ use Yii;
  * @property string $title
  * @property string $description
  * @property int $estimation
+ * @property int $project_id
  * @property int $executor_id
  * @property int $started_at
  * @property int $completed_at
@@ -22,9 +23,12 @@ use Yii;
  * @property User $executor
  * @property User $createdBy
  * @property User $updatedBy
+ * @property Project $project
  */
 class Task extends \yii\db\ActiveRecord
 {
+    const RELATION_PROJECT = 'project';
+
     /**
      * {@inheritdoc}
      */
@@ -100,5 +104,13 @@ class Task extends \yii\db\ActiveRecord
     public static function find()
     {
         return new \common\models\query\TaskQuery(get_called_class());
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProject()
+    {
+        return $this->hasOne(Project::className(), ['project_id' => 'id']);
     }
 }
