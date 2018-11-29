@@ -20,6 +20,7 @@ class ProjectSearch extends Project
         return [
             [['id', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
             [['title', 'description'], 'safe'],
+            ['active', 'boolean'],
         ];
     }
 
@@ -64,6 +65,7 @@ class ProjectSearch extends Project
             'updated_by' => $this->updated_by,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'active' => $this->active,
         ]);
 
         $query->andFilterWhere(['like', 'title', $this->title])

@@ -29,10 +29,18 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'title',
             'description:ntext',
+            [
+                'attribute' => 'active',
+                'filter' => common\models\Project::STATUS_LABELS,
+
+                'value' => function(\common\models\Project $model) {
+                    return \common\models\Project::STATUS_LABELS[$model->active];
+                }
+            ],
             'created_by',
             'updated_by',
-            //'created_at',
-            //'updated_at',
+            'created_at:datetime',
+            'updated_at:datetime',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

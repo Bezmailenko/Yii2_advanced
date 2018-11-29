@@ -14,8 +14,10 @@ use yii\filters\VerbFilter;
  */
 class ProjectController extends Controller
 {
+
+
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function behaviors()
     {
@@ -86,7 +88,7 @@ class ProjectController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($this->loadModel($model) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -95,12 +97,26 @@ class ProjectController extends Controller
         ]);
     }
 
+
+    private function loadModel(Project $model) {
+        $data = Yii::$app->request->post($model->formName());
+        $projectUsers = $data[Project::RELATION_PROJECT_USERS] ?? null;
+
+        if ($projectUsers != null) {
+            $model->projectUsers = $projectUsers === '' ? [] : $projectUsers;
+
+            return $model->load(Yii::$app->request->post());
+        }
+    }
+
     /**
      * Deletes an existing Project model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
