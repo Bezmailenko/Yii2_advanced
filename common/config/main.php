@@ -9,5 +9,18 @@ return [
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
+        'emailService' => [
+            'class' => \common\services\EmailService::class,
+        ],
+        'notificationService' => [
+            'class' => \common\services\NotificationService::class,
+        ],
+        'projectService' => [
+            'class' => \common\services\ProjectService::class,
+            'on '.\common\services\ProjectService::EVENT_ASSIGN_ROLE =>
+                function(\common\services\AssignRoleEvent $event) {
+                    Yii::$app->notificationService->notifyUserRoleChange($event);
+            }
+        ],
     ],
 ];

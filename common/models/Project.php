@@ -22,6 +22,7 @@ use yii\behaviors\TimestampBehavior;
  * @property User $createdBy
  * @property User $updatedBy
  * @property ProjectUser[] $projectUsers
+ * @property ProjectUser[] $usersData
  */
 class Project extends \yii\db\ActiveRecord
 {
@@ -43,7 +44,9 @@ class Project extends \yii\db\ActiveRecord
             BlameableBehavior::class,
             'saveRelations' => [
                 'class' => SaveRelationsBehavior::class,
-                'relations' => ['projectUsers']
+                'relations' => [
+                    self::RELATION_PROJECT_USERS
+                ],
             ],
         ];
     }
@@ -127,5 +130,9 @@ class Project extends \yii\db\ActiveRecord
     public function getId()
     {
         return $this->getPrimaryKey();
+    }
+
+    public function getUsersData() {
+        return $this->getProjectUsers()->select('role')->indexBy('user_id')->column();
     }
 }

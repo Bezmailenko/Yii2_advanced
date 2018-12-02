@@ -18,7 +18,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'active')->dropDownList(\common\models\Project::STATUS_LABELS) ?>
 
-    <?php if ($model->getId()): ?>
+    <?php if (!$model->isNewRecord): ?>
     <?= $form->field($model, \common\models\Project::RELATION_PROJECT_USERS)->
     widget(\unclead\multipleinput\MultipleInput::className(), [
         'id' => 'project-users-widget',
