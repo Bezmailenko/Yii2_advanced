@@ -12,13 +12,14 @@ use common\models\Task;
  */
 class TaskSearch extends Task
 {
+
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['id', 'estimation', 'executor_id', 'started_at', 'completed_at', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
+            [['id', 'estimation', 'executor_id', 'project_id', 'started_at', 'completed_at', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
             [['title', 'description'], 'safe'],
         ];
     }
@@ -49,6 +50,32 @@ class TaskSearch extends Task
             'query' => $query,
         ]);
 
+        $dataProvider->setSort([
+            'attributes' => array_merge($dataProvider->getSort()->attributes,
+                [
+                    'project' => [
+                    'asc' => ['project.title' => SORT_ASC],
+                    'desc' => ['project.title' => SORT_DESC],
+                    'default' => SORT_ASC,
+                    'label' => 'Project'
+                    ],
+
+                    'executor' => [
+                        'asc' => ['user.username' => SORT_ASC],
+                        'desc' => ['user.username' => SORT_DESC],
+                        'default' => SORT_ASC,
+                        'label' => 'Executor Name'
+                    ],
+
+                    'createdBy.name' => [
+                        'asc' => ['user.username' => SORT_ASC],
+                        'desc' => ['user.username' => SORT_DESC],
+                        'default' => SORT_ASC,
+                        'label' => 'CreatedBy Name'
+                    ],
+                ]),
+        ]);
+
         $this->load($params);
 
         if (!$this->validate()) {
@@ -60,6 +87,7 @@ class TaskSearch extends Task
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'project_id' => $this->project_id,
             'estimation' => $this->estimation,
             'executor_id' => $this->executor_id,
             'started_at' => $this->started_at,

@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
+use yii\helpers\VarDumper;
 
 /**
  * This is the model class for table "task".
@@ -22,12 +24,16 @@ use Yii;
  *
  * @property User $executor
  * @property User $createdBy
+ * @property User $createdByName
+ * @property User $createdById
  * @property User $updatedBy
  * @property Project $project
+ * @property Project[] $projectsNames
  */
 class Task extends \yii\db\ActiveRecord
 {
     const RELATION_PROJECT = 'project';
+    const RELATION_PROJECTS_NAMES = 'projectsNames';
 
     /**
      * {@inheritdoc}
@@ -43,9 +49,9 @@ class Task extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title', 'description', 'estimation', 'created_by', 'created_at'], 'required'],
+            [['title', 'description', 'estimation', 'project_id', 'created_by', 'created_at'], 'required'],
             [['description'], 'string'],
-            [['estimation', 'executor_id', 'started_at', 'completed_at', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
+            [['estimation', 'project_id', 'executor_id', 'started_at', 'completed_at', 'created_by', 'updated_by', 'created_at', 'updated_at'], 'integer'],
             [['title'], 'string', 'max' => 255],
             [['executor_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['executor_id' => 'id']],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
@@ -90,6 +96,20 @@ class Task extends \yii\db\ActiveRecord
     }
 
     /**
+     */
+    public function getCreatedByName()
+    {
+        return $this->createdBy->username;
+    }
+
+    /**
+     */
+    public function getCreatedById()
+    {
+        return $this->createdBy->id;
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getUpdatedBy()
@@ -111,6 +131,16 @@ class Task extends \yii\db\ActiveRecord
      */
     public function getProject()
     {
-        return $this->hasOne(Project::className(), ['project_id' => 'id']);
+        return $this->hasOne(Project::className(), ['id' => 'project_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProjectsNames()
+    {
+//        $projects = Project::find()->select('title')->column();
+//        $names = ;
+        return $this->hasMany(Project::className(), ['id' => 'project_id']);
     }
 }

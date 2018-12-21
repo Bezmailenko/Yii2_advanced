@@ -1,11 +1,13 @@
 <?php
 namespace common\models;
 
+use common\models\query\UserQuery;
 use mohorev\file\UploadImageBehavior;
 use Yii;
 use yii\base\NotSupportedException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\web\IdentityInterface;
 
 /**
@@ -269,5 +271,20 @@ class User extends ActiveRecord implements IdentityInterface
     public function getUpdatedProjects()
     {
         return $this->hasMany(Project::className(), ['updated_by' => 'id']);
+    }
+
+
+    public function getAvatar()
+    {
+        return $this->getThumbUploadUrl('avatar', \common\models\User::AVATAR_ICO);
+    }
+
+    public function getUsername()
+    {
+        return $this->username.' #'.$this->id;
+    }
+
+    public static function getActiveList() {
+        return  ArrayHelper::map(UserQuery::onlyActive(), 'id', 'username');
     }
 }

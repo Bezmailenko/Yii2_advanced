@@ -2,10 +2,13 @@
 
 namespace frontend\controllers;
 
+use common\models\Project;
+use Throwable;
 use Yii;
 use common\models\Task;
 use common\models\search\TaskSearch;
 use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -48,10 +51,19 @@ class TaskController extends Controller
         $searchModel = new TaskSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
-        return $this->render('index', [
+
+
+        $query = $dataProvider->query;
+        $query->byUser(Yii::$app->user->id);
+
+        $projectList = ArrayHelper::map(Project::find()->byUser(Yii::$app->user->id)->all(), 'id', 'title');
+
+        $content = $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'projectList' => $projectList,
         ]);
+        return $content;
     }
 
     /**
@@ -106,11 +118,55 @@ class TaskController extends Controller
     }
 
     /**
+     * Updates an existing Task model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionTake($id)
+    {
+        $model = Yii::$app->taskService->takeTask($this->findModel($id), Yii::$app->user->id);
+
+        if ($model) {
+            Yii::$app->session->setFlash('success', 'Успешно взяли');
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Updates an existing Task model.
+     * If update is successful, the browser will be redirected to the 'view' page.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionComplete($id)
+    {
+        $model = Yii::$app->taskService->completedTask($this->findModel($id));
+
+        if ($model) {
+            Yii::$app->session->setFlash('success', 'Успешно завершена');
+            return $this->redirect(['view', 'id' => $model->id]);
+        }
+
+        return $this->render('update', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
      * Deletes an existing Task model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
+     * @throws Throwable
+     * @throws \yii\db\StaleObjectException
      */
     public function actionDelete($id)
     {
@@ -134,4 +190,5 @@ class TaskController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
 }
